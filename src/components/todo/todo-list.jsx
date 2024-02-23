@@ -1,39 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import "./todo-list.css";
 import TodoAdd from "./todo-add";
 import TodoFilter from "./todo-filter";
 import TodoItem from "./todo-item";
-
-const list = [
-  {
-    id: 1,
-    title: "Work",
-    done: true,
-  },
-  {
-    id: 2,
-    title: "Shop",
-    done: false,
-  },
-  {
-    id: 3,
-    title: "Gym",
-    done: false,
-  },
-];
+import list from "./data";
+import { nanoid } from "nanoid";
 
 const TodoList = () => {
+  const [tasks, setTasks] = useState(list);
+
+  const addTask = (title) => {
+    setTasks([
+      ...tasks,
+      {
+        id: nanoid(),
+        title,
+        done: false,
+      },
+    ]);
+  };
+
+  const removeTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
   return (
     <div className="container">
       <h1 style={{ color: "dodgerblue" }}>ToDo List</h1>
 
       <div className="todo-list">
-        <TodoAdd />
+        <TodoAdd addTask={addTask} />
         <TodoFilter />
 
         <div>
-          {list.map((task) => (
-            <TodoItem {...task} key={task.id} />
+          {tasks.map((task) => (
+            <TodoItem {...task} removeTask={removeTask} key={task.id} />
           ))}
         </div>
       </div>
@@ -42,4 +43,3 @@ const TodoList = () => {
 };
 
 export default TodoList;
-
