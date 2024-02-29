@@ -9,21 +9,15 @@ import { useEffect } from "react";
 import { TodoReducer } from "./todo-reducer";
 
 const TodoList = () => {
-  const [tasks2, dispatch] = useReducer(TodoReducer, []);
-  console.log(tasks2);
+  const [tasks, dispatch] = useReducer(TodoReducer, []);
 
-
-
-  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
 
   useEffect(() => {
-    setTasks(JSON.parse(localStorage.getItem("tasks")) || list);
-
     dispatch({
-      type: "create",
-    });
-    
+      type: 'restore',
+      payload: JSON.parse(localStorage.getItem("tasks")) || list
+    })
   }, []);
 
   useEffect(() => {
@@ -37,39 +31,31 @@ const TodoList = () => {
   };
 
   const addTask = (title) => {
-    setTasks([
-      ...tasks,
-      {
-        id: nanoid(),
-        title,
-        done: false,
-      },
-    ]);
+    dispatch({
+      type: 'create',
+      payload: title
+    });
   };
 
   const removeTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    dispatch({
+      type: 'remove',
+      payload: id
+    })
   };
 
   const toggleDone = (id) => {
-    const newTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, done: !task.done };
-      }
-      return task;
-    });
-
-    setTasks(newTasks);
+     dispatch({
+       type: "changeDone",
+       payload: id,
+     });
   };
 
   const updateTask = (id, title) => {
-    const newTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, title };
-      }
-      return task;
+    dispatch({
+      type: "update",
+      payload: {id, title},
     });
-    setTasks(newTasks);
   };
 
   return (
